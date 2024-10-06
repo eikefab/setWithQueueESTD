@@ -1,45 +1,56 @@
-from filaArray import FilaArray
+from filaArray import *
 
-class ElementoJaExiste(Exception):
+class ElementoNaoExiste(ValueError):
     pass
 
 class SetWithQueue:
     def __init__(self):
         self._lista = FilaArray()
+        self._set = dict()
 
     def size(self):
         return len(self._lista)
     
+    def __len__(self):
+        return self.size()
+    
+    def __str__(self):
+        return str(self._lista)
+    
     def list(self):
-        # IMPLEMENTADO USANDO O __STR__, TALVEZ MUDAR
-        return(print(self._lista))
+        return [i for i in self._set.keys()]
     
     def add(self, value):
         if self.contains(value):
-            raise ElementoJaExiste("O elemento a ser adicionado já está na Fila.")
+            return
+        
+        self._set[value] = self.size()
         self._lista.enqueue(value)
 
     def remove(self, value):
-        # IMPLEMENTAR
+        if not self.contains(value):
+            raise ElementoNaoExiste("Element not found")
+        
+        if self._lista.is_empty():
+            raise FilaVazia("A fila está vazia.")
+        
+        aux = FilaArray()
+        
+        while not self._lista.is_empty():
+            item = self._lista.first()
+            
+            if item != value:
+                aux.enqueue(item)
+                
+            self._lista.dequeue()
+            
+        self._lista = aux
+        
+        del self._set[value] 
+        
         return
     
-    ### PENSAR SE HA MANEIRA MELHOR DE IMPLEMENTAR
     def contains(self, value):
-        # LISTA TEMPORARIA
-        temp = []
-        found = False
-        
-        # USA OS METODOS DE ENQUEUE E DEQUEUE PARA RODAR A LISTA BUSCANDO
-        for i in range(len(self._lista)):
-            current = self._lista.dequeue()
-            temp.append(current)
-            if current == value:
-                found = True
-        
-        # DEVOLVENDO ITENS
-        for item in temp:
-            self._lista.enqueue(item)
-
-        return found
+        return value in self._set.keys()
      
     
