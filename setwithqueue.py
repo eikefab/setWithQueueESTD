@@ -9,6 +9,7 @@ class SetWithQueue:
         self._set = dict()
 
     def size(self):
+        # O(1), FUNCAO SIMPLES
         return len(self._lista)
     
     def __len__(self):
@@ -18,9 +19,12 @@ class SetWithQueue:
         return str(self._lista)
     
     def list(self):
+        # O(1) --- REVISAR
         return [i for i in self._set.keys()]
     
     def add(self, value):
+        # O(1) AMORTIZADO
+        # POR ENQUANTO POIS CONTAINS É O(1) E O UNICO CASO DE O(N) SERIA NO AUMENTO DO TAMANHO DA FILA
         if self.contains(value):
             return
         
@@ -28,6 +32,8 @@ class SetWithQueue:
         self._lista.enqueue(value)
 
     def remove(self, value):
+        # O(N)
+        # Necessário realizar loop em todos os valores
         if not self.contains(value):
             raise ElementoNaoExiste("Element not found")
         
@@ -51,6 +57,7 @@ class SetWithQueue:
         return
     
     def contains(self, value):
+        # O(1) --- REVISAR
         return value in self._set.keys()
      
     
