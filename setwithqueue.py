@@ -4,12 +4,11 @@ class ElementoNaoExiste(ValueError):
     pass
 
 class SetWithQueue:
+    
     def __init__(self):
         self._lista = FilaArray()
-        self._set = dict()
-
+        
     def size(self):
-        # O(1), FUNCAO SIMPLES
         return len(self._lista)
     
     def __len__(self):
@@ -19,21 +18,50 @@ class SetWithQueue:
         return str(self._lista)
     
     def list(self):
-        # O(1) --- REVISAR
-        return [i for i in self._set.keys()]
+        '''
+            Retorna todos os elementos presentes na estrutura em formato de lista.
+            
+            Ex.
+                set = SetWithQueue()
+                set.add(1)
+                set.add(2)
+                set.add(3)
+                set.list() # [1, 2, 3]
+        '''
+        
+        if self._lista.is_empty():
+            return []
+
+        aux = FilaArray()
+        data = []
+        
+        while not self._lista.is_empty():
+            item = self._lista.dequeue()
+            
+            aux.enqueue(item)
+            data.append(item)
+        
+        self._lista = aux
+        
+        return data
     
     def add(self, value):
-        # O(1) AMORTIZADO
-        # POR ENQUANTO POIS CONTAINS É O(1) E O UNICO CASO DE O(N) SERIA NO AUMENTO DO TAMANHO DA FILA
+        '''
+            Adiciona o item na estrutura, sendo O(n) pois precisa verificar se o item já não existe na estrutura.
+        '''
+        
         if self.contains(value):
             return
         
-        self._set[value] = self.size()
         self._lista.enqueue(value)
-
+        
     def remove(self, value):
-        # O(N)
-        # Necessário realizar loop em todos os valores
+        '''
+            Remove o item da estrutura, disparando exceções caso o item não exista ou caso esteja vazia.
+            É O(n), pois percorre a estrutura por inteiro e verifica se o item passado via parâmetro está presente na 
+            estrutura.
+        '''
+        
         if not self.contains(value):
             raise ElementoNaoExiste("Element not found")
         
@@ -51,13 +79,29 @@ class SetWithQueue:
             self._lista.dequeue()
             
         self._lista = aux
-        
-        del self._set[value] 
-        
-        return
     
     def contains(self, value):
-        # O(1) --- REVISAR
-        return value in self._set.keys()
-     
+        '''
+            Verifica se o item está presente na estrutura.
+            O(n) pois percorre todos os elementos.
+        '''
+        
+        if self._lista.is_empty():
+            return False
+        
+        aux = FilaArray()
+        item = None
+        
+        while not self._lista.is_empty():
+            cursor = self._lista.dequeue()
+            
+            # Não posso dar break aqui, pois a fila ficaria incompleta
+            if cursor == value:
+                item = cursor
+            
+            aux.enqueue(cursor)
+        
+        self._lista = aux
+            
+        return item is not None
     
